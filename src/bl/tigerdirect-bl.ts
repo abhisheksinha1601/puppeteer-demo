@@ -7,38 +7,47 @@ export async function getAllReviews(productId) {
     let data = [];
     let page = await getNewPage();
     await page.goto(baseUrl + "/applications/searchtools/item-details.asp?EdpNo=" + productId, { timeout: 60000 });
-    await page.waitForSelector('.tabs');
 
-    let reviewTab = await page.$('#reviewtab');
-    if (!reviewTab) {
-        return data;        // No reviews yet
+    await page.waitForSelector('#mainC');
+    if (await page.$('#st404msg')) {
+        throw new Error('Invalid Product Id');
     }
-    await reviewTab.click();
+    try {
+        await page.waitForSelector('.tabs');        // For being sure that tabs have rendered
 
-    while (true) {
-        await page.waitForSelector('#review');
-        let reviewsElems = await page.$$('#review #customerReviews > #customerReviews');
+        let reviewTab = await page.$('#reviewtab');
+        if (!reviewTab) {
+            return data;        // No reviews yet
+        }
+        await reviewTab.click();
 
-        // Get reviews for current page
-        await extractReviews(reviewsElems, data);
+        while (true) {
+            await page.waitForSelector('#review');
+            let reviewsElems = await page.$$('#review #customerReviews > #customerReviews');
 
-        let paginationElem = await page.$('#review #customerReviews > .reviewsPagination');
-        let nextPrevLinkElems = await paginationElem.$$('.reviewPage dd > a');
-        let nextPageLink: puppeteer.ElementHandle<any>;
-        for (let i = 0; i < nextPrevLinkElems.length; i++) {
-            let linkText = await (await nextPrevLinkElems[i].getProperty('innerText')).jsonValue();
-            if (linkText && linkText.includes('Next')) {
-                nextPageLink = nextPrevLinkElems[i];
+            // Get reviews for current page
+            await extractReviews(reviewsElems, data);
+
+            let paginationElem = await page.$('#review #customerReviews > .reviewsPagination');
+            let nextPrevLinkElems = await paginationElem.$$('.reviewPage dd > a');
+            let nextPageLink: puppeteer.ElementHandle<any>;
+            for (let i = 0; i < nextPrevLinkElems.length; i++) {
+                let linkText = await (await nextPrevLinkElems[i].getProperty('innerText')).jsonValue();
+                if (linkText && linkText.includes('Next')) {
+                    nextPageLink = nextPrevLinkElems[i];
+                    break;
+                }
+            }
+            if (!nextPageLink) {
                 break;
             }
+            await nextPageLink.click();         // Goto next page
         }
-        if (!nextPageLink) {
-            break;
-        }
-        await nextPageLink.click();         // Goto next page
-    }
 
-    await page.close();
+        await page.close();
+    } catch (e) {
+        console.log(e);
+    }
     return data;
 }
 
