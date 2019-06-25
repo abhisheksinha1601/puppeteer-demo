@@ -1,0 +1,20 @@
+{
+  "name": "puppeteer-demo",
+  "version": "1.0.0",
+  "description": "Puppeteer Demo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abhishek Sinha",
+  "dependencies": {
+    "express": "^4.17.1",
+    "http": "0.0.0",
+    "puppeteer": "^1.18.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.0",
+    "@types/puppeteer": "^1.12.4",
+    "typescript": "^3.5.2"
+  }
+}
