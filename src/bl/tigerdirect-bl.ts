@@ -1,19 +1,17 @@
 import puppeteer = require('puppeteer');
+import { getNewPage } from './common';
 
 const baseUrl = "http://www.tigerdirect.com";
 
 export async function getAllReviews(productId) {
     let data = [];
-    let browser = await puppeteer.launch({ headless: true });
-    let page = await browser.newPage();
-    page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
-    
+    let page = await getNewPage();
     await page.goto(baseUrl + "/applications/searchtools/item-details.asp?EdpNo=" + productId, { timeout: 60000 });
     await page.waitForSelector('.tabs');
 
     let reviewTab = await page.$('#reviewtab');
     if (!reviewTab) {
-        return data;
+        return data;        // No reviews yet
     }
     await reviewTab.click();
 
@@ -37,11 +35,10 @@ export async function getAllReviews(productId) {
         if (!nextPageLink) {
             break;
         }
-        await nextPageLink.click();
+        await nextPageLink.click();         // Goto next page
     }
 
     await page.close();
-    await browser.close();
     return data;
 }
 

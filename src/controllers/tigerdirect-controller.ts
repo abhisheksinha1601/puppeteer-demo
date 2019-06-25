@@ -6,6 +6,7 @@ export async function getAllReviews(req, res) {
         return;
     }
     try {
+        console.log("Review request for productId: " + req.query.productId);
         let result = await tigerDirectBL.getAllReviews(req.query.productId);
         return res.status(200).send({ error: false, message: "success", result });
     } catch (e) {

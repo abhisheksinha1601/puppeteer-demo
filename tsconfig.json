@@ -14,7 +14,8 @@
 		// "allowJs": true,
 		"outDir": "./dist",
 		"baseUrl": "./src",
-		"lib": ["es2017"]
+		"lib": ["es2017"],
+		"skipLibCheck": true
 	},
 	"include": [
 		"src/**/*.ts"
