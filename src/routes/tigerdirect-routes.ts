@@ -1,7 +1,7 @@
 import express = require('express');
+import { tigerDirectControllers } from '../controllers';
 
 let app = express.Router();
-import { tigerDirectControllers } from '../controllers';
 
 app.get('/get-reviews', tigerDirectControllers.getAllReviews);
 // other routes

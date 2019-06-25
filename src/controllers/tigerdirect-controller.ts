@@ -8,7 +8,8 @@ export async function getAllReviews(req, res) {
     try {
         console.log("Review request for productId: " + req.query.productId);
         let result = await tigerDirectBL.getAllReviews(req.query.productId);
-        console.log(`Found ${result.length} reviews for produclId: ${req.query.productId}`);
+        console.log(`Found ${result.length} reviews for productId: ${req.query.productId}`);
+        
         return res.status(200).send({ error: false, message: "success", result });
     } catch (e) {
         console.error(e);
